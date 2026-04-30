@@ -1,26 +1,21 @@
 {
   "version": 2,
-  "builds": [
+  "buildCommand": "cd church-frontend && npm install && npm run build",
+  "outputDirectory": "church-frontend/dist",
+  "rewrites": [
     {
-      "src": "src/server.js",
-      "use": "@vercel/node"
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
     },
     {
-      "src": "church-frontend/package.json",
-      "use": "@vercel/static-build"
+      "source": "/:path*",
+      "destination": "/index.html"
     }
   ],
-  "routes": [
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "src/server.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+  "functions": {
+    "src/server.js": {
+      "memory": 1024,
+      "maxDuration": 60
     }
-  ]
+  }
 }

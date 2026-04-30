@@ -4,11 +4,17 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import { v2 as cloudinary } from 'cloudinary';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 
 // Load Environment Variables
 dotenv.config();
+
+// Get __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Create Express App
 const app = express();
@@ -37,8 +43,14 @@ app.use(cors({
     },
     credentials: true
 }));
+
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
+
+// Serve frontend static files
+const frontendBuildPath = path.join(__dirname, '../church-frontend/dist');
+app.use(express.static(frontendBuildPath));
 
 // Database Connection
 let cachedConnection = global.mongoose;
@@ -70,12 +82,22 @@ const connectDB = async () => {
 };
 
 // Define API Endpoints
-app.get('/', async (req, res) => {
+app.get('/api', async (req, res) => {
     try {
         await connectDB();
         res.json({ message: 'Welcome to the Church Management API' });
     } catch (error) {
         res.status(500).json({ error: 'Database connection failed' });
+    }
+});
+
+// SPA fallback - serve index.html for all non-API routes
+app.get('*', async (req, res) => {
+    try {
+        await connectDB();
+        res.sendFile(path.join(frontendBuildPath, 'index.html'));
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to load app' });
     }
 });
 
