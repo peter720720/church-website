@@ -92,7 +92,7 @@ app.get('/api', async (req, res) => {
 });
 
 // SPA fallback - serve index.html for all non-API routes
-app.get('*', async (req, res) => {
+app.use('*', async (req, res) => {
     try {
         await connectDB();
         res.sendFile(path.join(frontendBuildPath, 'index.html'));
