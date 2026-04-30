@@ -1,0 +1,32 @@
+{
+  "name": "church-management-system",
+  "version": "1.0.0",
+  "description": "Professional Church Website with Member Authentication and OTP Reset",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "build": "cd church-frontend && npm run build",
+    "build:frontend": "cd church-frontend && npm run build"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "bcryptjs": "^3.0.2",
+    "cloudinary": "^2.5.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^5.0.1",
+    "framer-motion": "^12.4.7",
+    "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.475.0",
+    "mongoose": "^8.10.1",
+    "nodemailer": "^6.10.0",
+    "react-router-dom": "^7.2.0",
+    "resend": "^4.1.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
