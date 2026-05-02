@@ -2,20 +2,14 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import mongoose from 'mongoose';
-import { v2 as cloudinary } from 'cloudinary';
 import serverless from 'serverless-http';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import '../src/config/db.js';
-import authRoutes from '../src/routes/authRoutes.js';
-import adminRoutes from '../src/routes/adminRoutes.js';
+import { v2 as cloudinary } from 'cloudinary';
+import './config/db.js';
+import authRoutes from './routes/authRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
+
 // Load Environment Variables
 dotenv.config();
-
-// Get __dirname for ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // Create Express App
 const app = express();
