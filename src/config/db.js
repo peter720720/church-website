@@ -4,6 +4,10 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+if (!process.env.MONGO_URL) {
+    throw new Error("Missing required environment variable: MONGO_URL");
+}
+
 // ✅ Ensure your MONGO_URL in .env ends with /church_db
 const memberDB = mongoose.createConnection(process.env.MONGO_URL);
 

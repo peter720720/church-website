@@ -4,6 +4,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import { v2 as cloudinary } from 'cloudinary';
+import serverless from 'serverless-http';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import '../src/config/db.js';
@@ -27,7 +28,8 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-const allowedOrigins = [process.env.FRONTEND_URL, 'http://localhost:5173'];
+const allowedOrigins = [process.env.FRONTEND_URL, 'http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:4173'].filter(Boolean);
+const allowAllOrigins = !process.env.FRONTEND_URL;
 
 // Middleware
 app.use(express.json());
@@ -35,7 +37,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors({
     origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
+        if (!origin || allowAllOrigins || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
             callback(new Error('CORS not allowed'));
@@ -53,10 +55,10 @@ app.get('/api', (req, res) => {
     res.json({ message: 'Welcome to the Church Management API' });
 });
 
-if (process.env.VERCEL !== '1') {
+if (process.env.VERCEL !== '1' && process.env.NETLIFY !== 'true') {
     app.listen(PORT, () => {
         console.log(`🚀 Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
     });
 }
 
-export default (req, res) => app(req, res);
+export const handler = serverless(app);

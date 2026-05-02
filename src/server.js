@@ -27,7 +27,8 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-const allowedOrigins = [process.env.FRONTEND_URL, 'http://localhost:5173'];
+const allowedOrigins = [process.env.FRONTEND_URL, 'http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:4173'].filter(Boolean);
+const allowAllOrigins = !process.env.FRONTEND_URL;
 
 // Middleware
 app.use(express.json());
@@ -35,7 +36,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors({
     origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
+        if (!origin || allowAllOrigins || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
             callback(new Error('CORS not allowed'));
@@ -92,7 +93,7 @@ app.get('/api', async (req, res) => {
 });
 
 // SPA fallback - serve index.html for all non-API routes
-app.use('*', async (req, res) => {
+app.use(/.*/, async (req, res) => {
     try {
         await connectDB();
         res.sendFile(path.join(frontendBuildPath, 'index.html'));
