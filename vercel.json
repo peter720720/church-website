@@ -1,11 +1,11 @@
-{
-  "version": 2,
-  "buildCommand": "cd church-frontend && npm run build",
-  "outputDirectory": "church-frontend/dist",
-  "rewrites": [
-    {
-      "source": "/:path*",
-      "destination": "/index.html"
-    }
-  ]
-}
+// {
+//   "version": 2,
+//   "buildCommand": "cd church-frontend && npm run build",
+//   "outputDirectory": "church-frontend/dist",
+//   "rewrites": [
+//     {
+//       "source": "/:path*",
+//       "destination": "/index.html"
+//     }
+//   ]
+// }
