@@ -16,7 +16,7 @@ const router = express.Router();
  * @route   POST /api/auth/signup
  * @desc    Register a new church member
  */
-router.post("/signup", signup);
+router.post("/register", data);
 
 /**
  * @route   POST /api/auth/login
