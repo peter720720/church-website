@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'https://church-website-1-c047.onrender.com',
         changeOrigin: true,
       },
     },
