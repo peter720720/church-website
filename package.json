@@ -2,11 +2,11 @@
   "name": "church-management-system",
   "version": "1.0.0",
   "description": "Professional Church Website with Member Authentication and OTP Reset",
-  "main": "src/server.js",
+  "main": "backend/src/server.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/server.js",
-    "start": "node src/server.js",
+    "dev": "nodemon backend/src/server.js",
+    "start": "node backend/src/server.js",
     "build": "cd church-frontend && npm run build",
     "build:frontend": "cd church-frontend && npm run build"
   },

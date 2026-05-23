@@ -4,39 +4,34 @@
 // import cookieParser from 'cookie-parser';
 // import mongoose from 'mongoose';
 // import { v2 as cloudinary } from 'cloudinary';
-// import path from 'path';
-// import { fileURLToPath } from 'url';
 // import authRoutes from './routes/authRoutes.js';
 // import adminRoutes from './routes/adminRoutes.js';
 
 // // Load Environment Variables
 // dotenv.config();
 
-// // Get __dirname for ES modules
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-
 // // Create Express App
 // const app = express();
 // const PORT = process.env.PORT || 5000;
 
-// // Cloudinary Configuration (For Church Media/Profile Photos)
+// // Cloudinary Configuration
 // cloudinary.config({
 //     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
 //     api_key: process.env.CLOUDINARY_API_KEY,
 //     api_secret: process.env.CLOUDINARY_API_SECRET
 // });
 
-// const allowedOrigins = [process.env.FRONTEND_URL, 'http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:4173'].filter(Boolean);
-// const allowAllOrigins = !process.env.FRONTEND_URL;
+// // ✅ CORS FIX (allow Netlify frontend)
+// const allowedOrigins = [
+//     process.env.FRONTEND_URL,
+//     'https://ecclesia-faith-assembly.vercel.app',
+//     'http://localhost:5173',
+//     'http://127.0.0.1:5173'
+// ].filter(Boolean);
 
-// // Middleware
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
-// app.use(cookieParser());
 // app.use(cors({
 //     origin: (origin, callback) => {
-//         if (!origin || allowAllOrigins || allowedOrigins.includes(origin)) {
+//         if (!origin || allowedOrigins.includes(origin)) {
 //             callback(null, true);
 //         } else {
 //             callback(new Error('CORS not allowed'));
@@ -45,13 +40,14 @@
 //     credentials: true
 // }));
 
+// // Middleware
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+// app.use(cookieParser());
+
 // // API Routes
 // app.use('/api/auth', authRoutes);
 // app.use('/api/admin', adminRoutes);
-
-// // Serve frontend static files
-// const frontendBuildPath = path.join(__dirname, '../church-frontend/dist');
-// app.use(express.static(frontendBuildPath));
 
 // // Database Connection
 // let cachedConnection = global.mongoose;
@@ -61,9 +57,7 @@
 // }
 
 // const connectDB = async () => {
-//     if (cachedConnection.conn) {
-//         return cachedConnection.conn;
-//     }
+//     if (cachedConnection.conn) return cachedConnection.conn;
 
 //     if (!cachedConnection.promise) {
 //         cachedConnection.promise = mongoose.connect(process.env.MONGO_URL, {
@@ -82,7 +76,12 @@
 //     return cachedConnection.conn;
 // };
 
-// // Define API Endpoints
+// // Basic test route
+// app.get('/', (req, res) => {
+//     res.send('Church API is running 🚀');
+// });
+
+// // API test route
 // app.get('/api', async (req, res) => {
 //     try {
 //         await connectDB();
@@ -92,22 +91,14 @@
 //     }
 // });
 
-// // SPA fallback - serve index.html for all non-API routes
-// app.use(/.*/, async (req, res) => {
-//     try {
-//         await connectDB();
-//         res.sendFile(path.join(frontendBuildPath, 'index.html'));
-//     } catch (error) {
-//         res.status(500).json({ error: 'Failed to load app' });
-//     }
-// });
-
-// if (process.env.VERCEL !== '1') {
-//     connectDB().catch(() => {});
+// // Start Server
+// connectDB().then(() => {
 //     app.listen(PORT, () => {
-//         console.log(`🚀 Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+//         console.log(`🚀 Server running on port ${PORT}`);
 //     });
-// }
+// }).catch(() => {
+//     console.error('❌ Failed to connect to database');
+// });
 
 // export default app;
 
@@ -135,20 +126,30 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// ✅ CORS FIX (allow Netlify frontend)
+// ✅ CORS FIX (Handles all Vercel previews, local development, and production)
 const allowedOrigins = [
     process.env.FRONTEND_URL,
+    'https://ecclesia-faith-assembly.vercel.app',
     'http://localhost:5173',
     'http://127.0.0.1:5173'
 ].filter(Boolean);
 
 app.use(cors({
     origin: (origin, callback) => {
+        // 1. Allow internal requests or exact matches from the list
         if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('CORS not allowed'));
+            return callback(null, true);
         }
+        
+        // 2. Dynamic check: Allow ANY generated preview URL ending with vercel.app
+        const isVercelPreview = origin.endsWith('.vercel.app') && origin.includes('ecclesia-faith-assembly');
+        
+        if (isVercelPreview) {
+            return callback(null, true);
+        }
+        
+        // 3. Reject other unauthorized domains
+        callback(new Error('CORS not allowed'));
     },
     credentials: true
 }));
