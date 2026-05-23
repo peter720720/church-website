@@ -32,7 +32,7 @@ const Login = () => {
     setError("");
 
     try {
-      const res = await API.post("/login", formData);
+      const res = await API.post("/auth/login", formData);
       
       if (res.data.success) {
         // Store session data in LocalStorage

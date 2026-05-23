@@ -15,7 +15,7 @@ const AdminSignup = () => {
     setLoading(true);
     try {
       // ✅ We send the role: "admin" directly to the signup endpoint
-      const res = await API.post("/signup", formData);
+      const res = await API.post("/auth/signup", formData);
       if (res.data.success) {
         navigate("/admin-portal"); // Go to admin login after signup
       }

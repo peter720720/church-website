@@ -16,7 +16,7 @@ const AdminLogin = () => {
     setError("");
 
     try {
-      const res = await API.post("/login", formData);
+      const res = await API.post("/auth/login", formData);
       
       // ✅ PROFESSIONAL CHECK: Verify the role sent from backend
       if (res.data.user.role === "admin") {

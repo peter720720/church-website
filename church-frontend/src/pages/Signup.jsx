@@ -14,7 +14,7 @@ const Signup = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const res = await API.post("/signup", formData);
+      const res = await API.post("/auth/signup", formData);
       if (res.data.success) {
         navigate("/login");
       }
